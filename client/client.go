@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -18,28 +19,25 @@ func main(){
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	defer cancel()
 
-	req, err := http.NewRequestWithContext(ctx, "GET", requestURL, nil)
-	if err != nil {
-		panic(err)
-	}
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, requestURL, nil)
+	checkErr(err)
 
 	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		panic(err)
-	}
+	checkErr(err)
 	defer res.Body.Close()
 
 	f, err := os.Create(fileName)
-	if err != nil {
-		panic(err)
-	}
+	checkErr(err)
 
 	r, err := io.ReadAll(res.Body)
-	if err != nil {
-		panic(err)
-	}
+	checkErr(err)
 
 	f.Write([]byte(fmt.Sprintf("Dólar: {%v}", string(r))))
+}
 
-
+func checkErr(e error) {
+	if e != nil {
+		log.Printf("erro encontrado: %v", e.Error())
+		panic(e)
+	}
 }

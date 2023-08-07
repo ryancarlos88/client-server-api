@@ -41,7 +41,6 @@ const (
 )
 
 func (s *Server) cotacaoHandler(w http.ResponseWriter, r *http.Request) {
-
 	apiCtx, cancel := context.WithTimeout(context.Background(), apiCallTimeout)
 	defer cancel()
 
@@ -63,7 +62,7 @@ func (s *Server) cotacaoHandler(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 
 	s.db.WithContext(dbCtx).Table("cotacoes").Create(&a.Cotacao)
-	
+
 	w.Write([]byte(a.Cotacao.Bid))
 }
 
@@ -87,6 +86,7 @@ type ApiResponse struct {
 
 func checkErr(e error) {
 	if e != nil {
+		log.Printf("erro encontrado: %v", e.Error())
 		panic(e)
 	}
 }
